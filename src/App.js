@@ -5,7 +5,7 @@ import DeteksiPage from "./pages/deteksiPage";
 import PakarPage from "./pages/pakarPage";
 import LoginPage from './pages/loginPage';
 import Navbar from "./components/navbar";
-import ProtectedRoute from "./components/protectedRoute"; // <== Tambahkan ini
+import ProtectedRoute from "./components/protectedRoute";
 
 function App() {
   return (
