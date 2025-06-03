@@ -29,7 +29,7 @@ export default function PakarPage() {
   return (
     <div style={styles.container}>
         <img
-      src="/images/diagnosa.png"
+      src="/images/ill3.jpg"
       alt="Diagnosa"
       style={styles.gambar}
     />

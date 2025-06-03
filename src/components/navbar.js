@@ -30,8 +30,8 @@ export default function Navbar() {
 
 const styles = {
   navbar: {
-    backgroundColor: '#2e7d32',
-    padding: '15px 30px',
+    backgroundColor: 'white',
+    padding: '5px 30px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -52,7 +52,7 @@ const styles = {
     alignItems: 'center',
   },
   link: {
-    color: 'white',
+    color: 'black',
     textDecoration: 'none',
     fontWeight: '500',
     padding: '8px 12px',

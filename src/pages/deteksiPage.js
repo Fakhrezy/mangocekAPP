@@ -40,7 +40,7 @@ export default function DeteksiPage() {
 
   return (
     <div style={styles.container}>
-        <img src="/images/deteksi.png" alt="deteksi" style={styles.gambar} />
+        <img src="/images/ill2.jpg" alt="deteksi" style={styles.gambar} />
       <h1 style={styles.title}>Deteksi Kualitas Buah Mangga</h1>
 
       <div style={styles.card}>
