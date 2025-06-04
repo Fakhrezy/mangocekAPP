@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import InformasiPage from "./pages/informasiPage";
 import DeteksiPage from "./pages/deteksiPage";
 import PakarPage from "./pages/pakarPage";
-import LoginPage from './pages/loginPage';
+import LoginPage from './pages/landingPage';
 import Navbar from "./components/navbar";
 import ProtectedRoute from "./components/protectedRoute";
 

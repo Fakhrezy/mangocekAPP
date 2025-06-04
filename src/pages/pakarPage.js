@@ -1,19 +1,43 @@
 import { useState } from 'react';
 import knowledgeBase from '../data/knowledgeBase.json';
+import Chatbot from '../components/chatbot';
 
 export default function PakarPage() {
   const [selectedGejala, setSelectedGejala] = useState([]);
   const [hasil, setHasil] = useState([]);
+  const [inputTeks, setInputTeks] = useState('');
+  const [chatbotOpen, setChatbotOpen] = useState(false);
+  const [loading, setLoading] = useState(false);  // state loading
 
   const semuaGejala = [...new Set(
     knowledgeBase.penyakit.flatMap(p => p.gejala)
   )];
 
-  const handleChange = (e) => {
-    const id = e.target.value;
-    setSelectedGejala(prev =>
-      e.target.checked ? [...prev, id] : prev.filter(g => g !== id)
-    );
+  const stemmerIndonesia = (word) => {
+    return word
+      .replace(/^(me|di|ter|ke|se|ber|pe|per|peng|pen|pem|men|mem|meny)/, '')
+      .replace(/(kan|an|i|nya|lah|kah)$/, '');
+  };
+
+  const tokenize = (text) => {
+    return text
+      .toLowerCase()
+      .replace(/[^\w\s]/g, '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .map(stemmerIndonesia);
+  };
+
+  const cosineSimilarity = (a, b) => {
+    const allWords = [...new Set([...a, ...b])];
+    const vecA = allWords.map(word => a.filter(w => w === word).length);
+    const vecB = allWords.map(word => b.filter(w => w === word).length);
+
+    const dotProduct = vecA.reduce((sum, val, i) => sum + val * vecB[i], 0);
+    const magnitudeA = Math.sqrt(vecA.reduce((sum, val) => sum + val * val, 0));
+    const magnitudeB = Math.sqrt(vecB.reduce((sum, val) => sum + val * val, 0));
+
+    return magnitudeA && magnitudeB ? dotProduct / (magnitudeA * magnitudeB) : 0;
   };
 
   const handleDiagnosa = () => {
@@ -26,25 +50,56 @@ export default function PakarPage() {
     setHasil(hasilDeteksi);
   };
 
+  // Fungsi diagnosa NLP dengan loading animasi
+  const handleDiagnosaNLP = () => {
+    setLoading(true);  // mulai loading
+
+    setTimeout(() => {
+      const tokenInput = tokenize(inputTeks);
+
+      const cocokGejala = semuaGejala.filter(g => {
+        const tokenGejala = tokenize(g.deskripsi);
+        return cosineSimilarity(tokenInput, tokenGejala) > 0.5;
+      });
+
+      const cocokIDs = cocokGejala.map(g => g.id);
+      setSelectedGejala(cocokIDs);
+
+      handleDiagnosa();
+
+      setLoading(false); // selesai loading
+    }, 1000); // simulasi delay proses 1 detik
+  };
+
+  const toggleChatbot = () => setChatbotOpen(prev => !prev);
+
   return (
     <div style={styles.container}>
-        <img
-      src="/images/ill3.jpg"
-      alt="Diagnosa"
-      style={styles.gambar}
-    />
+      <img src="/images/ill3.jpg" alt="Diagnosa" style={styles.gambar} />
       <h1 style={styles.title}>Diagnosa Penyakit Tanaman Mangga</h1>
 
-      <div style={styles.grid}>
-        {semuaGejala.map(g => (
-          <label key={g.id} style={styles.checkboxCard}>
-            <input type="checkbox" value={g.id} onChange={handleChange} />
-            <span>{g.deskripsi}</span>
-          </label>
-        ))}
-      </div>
+      <textarea
+        rows="4"
+        placeholder="Tuliskan gejala tanaman mangga di sini..."
+        value={inputTeks}
+        onChange={(e) => setInputTeks(e.target.value)}
+        style={{ width: '100%', marginBottom: '20px', padding: '10px', fontSize: '14px' }}
+      />
 
-      <button onClick={handleDiagnosa} style={styles.button}>🔍 Diagnosa</button>
+      <button
+        onClick={handleDiagnosaNLP}
+        style={{ ...styles.button, backgroundColor: '#00796b' }}
+        disabled={loading}  // disable saat loading
+      >
+        {loading ? 'Memproses...' : 'Diagnosa'}
+      </button>
+
+      {loading && (
+        <div style={styles.loadingContainer}>
+          <div style={styles.spinner} />
+          <span>Mohon tunggu, sedang memproses...</span>
+        </div>
+      )}
 
       {hasil.length > 0 && (
         <div style={{ marginTop: '30px' }}>
@@ -59,6 +114,16 @@ export default function PakarPage() {
           ))}
         </div>
       )}
+
+      <button onClick={toggleChatbot} style={styles.chatbotToggleBtn}>
+        {chatbotOpen ? 'Tutup Chatbot' : 'Chatbot'}
+      </button>
+
+      {chatbotOpen && (
+        <div style={styles.chatbotPopup}>
+          <Chatbot />
+        </div>
+      )}
     </div>
   );
 }
@@ -67,6 +132,7 @@ const styles = {
   container: {
     padding: '40px',
     fontFamily: 'Arial, sans-serif',
+    position: 'relative',
   },
   title: {
     textAlign: 'center',
@@ -74,25 +140,15 @@ const styles = {
     fontSize: '26px',
     color: '#2e7d32',
   },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '15px',
-    marginBottom: '30px',
-  },
-  checkboxCard: {
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    padding: '15px',
-    backgroundColor: '#f9fbe7',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    fontSize: '14px',
+  gambar: {
+    width: '100%',
+    maxWidth: '200px',
+    display: 'block',
+    margin: '0 auto 20px',
   },
   button: {
     display: 'block',
-    margin: '0 auto',
+    margin: '10px auto',
     padding: '12px 24px',
     fontSize: '16px',
     backgroundColor: '#43a047',
@@ -100,6 +156,23 @@ const styles = {
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
+  },
+  loadingContainer: {
+    marginTop: '20px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    justifyContent: 'center',
+    color: '#00796b',
+    fontWeight: 'bold',
+  },
+  spinner: {
+    width: '24px',
+    height: '24px',
+    border: '4px solid #43a047',
+    borderTop: '4px solid transparent',
+    borderRadius: '50%',
+    animation: 'spin 1s linear infinite',
   },
   resultTitle: {
     fontSize: '22px',
@@ -112,10 +185,33 @@ const styles = {
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
     marginBottom: '20px',
   },
-  gambar: {
-  width: '100%',
-  maxWidth: '200px',
-  display: 'block',
-  margin: '0 auto 20px',
-},
+  chatbotToggleBtn: {
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    padding: '12px 20px',
+    fontSize: '16px',
+    backgroundColor: '#43a047',
+    color: 'white',
+    border: 'none',
+    borderRadius: '30px',
+    cursor: 'pointer',
+    zIndex: 1000,
+  },
+  chatbotPopup: {
+    position: 'fixed',
+    bottom: '70px',
+    right: '20px',
+    width: '350px',
+    height: '450px',
+    border: '1px solid #ccc',
+    borderRadius: '15px',
+    backgroundColor: 'white',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+    zIndex: 1000,
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
 };
