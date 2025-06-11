@@ -200,10 +200,11 @@ const styles = {
   },
   chatbotPopup: {
     position: 'fixed',
-    bottom: '70px',
-    right: '20px',
-    width: '350px',
-    height: '450px',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)', // Posisikan di tengah layar
+    width: '500px', // Lebar yang lebih besar untuk chatbot
+    height: '600px', // Tinggi yang lebih besar untuk chatbot
     border: '1px solid #ccc',
     borderRadius: '15px',
     backgroundColor: 'white',
@@ -212,6 +213,7 @@ const styles = {
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
+    transition: 'all 0.3s ease-in-out',
   },
-
 };
+

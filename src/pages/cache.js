@@ -8,18 +8,6 @@ export default function ChatbotDiagnosa() {
   const [pertanyaanIndex, setPertanyaanIndex] = useState(0);
   const [diagnosa, setDiagnosa] = useState(null);
 
-  // Fungsi Text-to-Speech
-  const speak = (text) => {
-    const synth = window.speechSynthesis;
-    synth.cancel(); // Hentikan suara sebelumnya
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voices = synth.getVoices();
-    const indoVoice = voices.find(v => v.lang === 'id-ID' && v.name.toLowerCase().includes('female')) || voices.find(v => v.lang === 'id-ID') || voices.find(v => v.lang.includes('id'));
-    if (indoVoice) utterance.voice = indoVoice;
-    utterance.rate = 1;
-    synth.speak(utterance);
-  };
-
   useEffect(() => {
     async function fetchData() {
       const pertanyaanRes = await fetch('/pertanyaan.json');
@@ -32,17 +20,7 @@ export default function ChatbotDiagnosa() {
     fetchData();
   }, []);
 
-  // Trigger TTS ketika pertanyaan berubah
-  useEffect(() => {
-    if (pertanyaanList.length > 0 && pertanyaanIndex < pertanyaanList.length && !diagnosa) {
-      speak(pertanyaanList[pertanyaanIndex].pertanyaan);
-    }
-  }, [pertanyaanIndex, pertanyaanList, diagnosa]);
-
   const handleJawaban = (jawaban) => {
-    // Hentikan TTS saat tombol ditekan
-    window.speechSynthesis.cancel();
-
     const current = pertanyaanList[pertanyaanIndex];
 
     setMessages((prev) => [
@@ -62,39 +40,15 @@ export default function ChatbotDiagnosa() {
     }
   };
 
-  const lakukanDiagnosa = async () => {
+  const lakukanDiagnosa = () => {
     const hasil = knowledgeBase.map((penyakit) => {
       const cocok = penyakit.gejala.filter((g) => gejalaTerpilih.includes(g.id));
       const skor = cocok.length / penyakit.gejala.length;
-      return skor > 0 ? { nama: penyakit.nama, skor, gejala: cocok.map(g => g.id) } : null;
+      return skor > 0 ? { nama: penyakit.nama, skor } : null;
     }).filter(Boolean);
 
     hasil.sort((a, b) => b.skor - a.skor);
     setDiagnosa(hasil);
-
-    if (hasil.length > 0) {
-      const top = hasil[0];
-      try {
-        await fetch('http://localhost:5000/simpan-diagnosa', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nama_penyakit: top.nama,
-            skor: top.skor,
-            gejala: top.gejala
-          })
-        });
-        console.log('✅ Diagnosa tersimpan.');
-      } catch (err) {
-        console.error('❌ Gagal menyimpan diagnosa:', err);
-      }
-    }
-  };
-
-  const ulangiPertanyaan = () => {
-    if (pertanyaanList.length > 0 && pertanyaanIndex < pertanyaanList.length) {
-      speak(pertanyaanList[pertanyaanIndex].pertanyaan);
-    }
   };
 
   return (
@@ -132,8 +86,7 @@ export default function ChatbotDiagnosa() {
           <p style={{ fontSize: '18px', fontWeight: '500' }}>{pertanyaanList[pertanyaanIndex].pertanyaan}</p>
           <div style={{ marginTop: '10px' }}>
             <button onClick={() => handleJawaban(true)} style={{ padding: '10px 20px', marginRight: '10px', backgroundColor: '#43a047', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px' }}>Ya</button>
-            <button onClick={() => handleJawaban(false)} style={{ padding: '10px 20px', marginRight: '10px', backgroundColor: '#e53935', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px' }}>Tidak</button>
-            <button onClick={ulangiPertanyaan} style={{ padding: '10px 20px', backgroundColor: '#039be5', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px' }}>Ulangi</button>
+            <button onClick={() => handleJawaban(false)} style={{ padding: '10px 20px', backgroundColor: '#e53935', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px' }}>Tidak</button>
           </div>
         </div>
       )}

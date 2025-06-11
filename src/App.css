@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+/* Sembunyikan logo Toolpad default */
+div[data-testid="app-sidebar"] > div > div:first-child img {
+  display: none !important;
+}
+
+/* Opsional: sembunyikan teks "Toolpad" juga */
+div[data-testid="app-sidebar"] > div > div:first-child span {
+  display: none !important;
+}

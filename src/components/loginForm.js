@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function LoginForm({ onLoginSuccess, onClose }) {
+  const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -35,17 +38,22 @@ export default function LoginForm({ onLoginSuccess, onClose }) {
           setIsRegister(false); // Kembali ke form login setelah register berhasil
         } else {
           localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('user', JSON.stringify(result.user));
+localStorage.setItem('user', JSON.stringify(result.user));
 
-          Swal.fire({
-            icon: 'success',
-            title: 'Login berhasil',
-            text: `Selamat datang, ${result.user.username}!`,
-            showConfirmButton: false,
-            timer: 1500,
-          }).then(() => {
-            onLoginSuccess();
-          });
+Swal.fire({
+  icon: 'success',
+  title: 'Login berhasil',
+  text: `Selamat datang, ${result.user.username}!`,
+  showConfirmButton: false,
+  timer: 1500,
+}).then(() => {
+  if (result.user.role === 'admin') {
+    navigate('/dashboard');
+  } else {
+    navigate('/');
+  }
+});
+
         }
       } else {
         Swal.fire({
@@ -62,6 +70,7 @@ export default function LoginForm({ onLoginSuccess, onClose }) {
       });
     }
   };
+
 
   return (
     <div style={styles.modalOverlay}>

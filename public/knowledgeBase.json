@@ -1,0 +1,135 @@
+{
+  "penyakit": [
+    {
+      "id": "P001",
+      "nama": "Antraknose",
+      "gejala": [
+        {"id": "G001", "deskripsi": "Daun gugur"},
+        {"id": "G002", "deskripsi": "Daun kering"},
+        {"id": "G003", "deskripsi": "Permukaan kulit buah terdapat titik-titik hitam"},
+        {"id": "G004", "deskripsi": "Daun berlubang"},
+        {"id": "G005", "deskripsi": "Daun berupa bercak tidak teratur"},
+        {"id": "G006", "deskripsi": "Daun berwarna coklat keabuan"},
+        {"id": "G007", "deskripsi": "Batang muda berupa bercak coklat keabuan"},
+        {"id": "G008", "deskripsi": "Batang terdapat bercak membentuk gelang melingkari batang"},
+        {"id": "G009", "deskripsi": "Batang mati"},
+        {"id": "G010", "deskripsi": "Bunga terlihat bintik-bintik kecil"},
+        {"id": "G011", "deskripsi": "Daging buah busuk"},
+        {"id": "G012", "deskripsi": "Bunga gugur/rontok"}
+      ],
+      "pengendalian": [
+        "Pemangkasan penanaman jangan terlalu rapat",
+        "Bagian yang terserang dipotong dan dibakar",
+        "Air hangat + fungisida benomil (500ppm) atau diebendazol (90ppm) selama 5 menit"
+      ]
+    },
+    {
+      "id": "P002",
+      "nama": "Gleosporium",
+      "gejala": [
+        {"id": "G013", "deskripsi": "Buah busuk"},
+        {"id": "G014", "deskripsi": "Bunga layu"},
+        {"id": "G015", "deskripsi": "Daun bintik-bintik hitam"},
+        {"id": "G016", "deskripsi": "Daun menggulung"}
+      ],
+      "pengendalian": [
+        "Fungisida bubuk Bordeaux"
+      ]
+    },
+    {
+      "id": "P003",
+      "nama": "Penyakit Kulit",
+      "gejala": [
+        {"id": "G017", "deskripsi": "Batang/cabang mengeluarkan blendok"},
+        {"id": "G018", "deskripsi": "Kulit batang berwarna gelap"},
+        {"id": "G019", "deskripsi": "Kulit batang mengering"},
+        {"id": "G020", "deskripsi": "Kulit luar batang tampak seperti pecah-pecah"},
+        {"id": "G021", "deskripsi": "Kulit batang mengelupas sebagai kepingan"}
+      ],
+      "pengendalian": [
+        "Hindari pemangkasan tanaman terlalu berat",
+        "Pengapuran pangkal batang",
+        "Tutup luka waktu pemangkasan dengan klorox",
+        "Kelupas kulit yang terserang dan aplikasikan fungisida"
+      ]
+    },
+    {
+      "id": "P004",
+      "nama": "Cendawan Jelaga",
+      "gejala": [
+        {"id": "G022", "deskripsi": "Terdapat jamur pada daun"},
+        {"id": "G023", "deskripsi": "Daun berwarna kehitaman seperti beledu"}
+      ],
+      "pengendalian": [
+        "Basmi serangga penghasil cairan manis dengan insektisida/tepung belerang"
+      ]
+    },
+    {
+      "id": "P005",
+      "nama": "Bercak Karat Merah",
+      "gejala": [
+        {"id": "G024", "deskripsi": "Ranting berbintik kecoklatan"},
+        {"id": "G025", "deskripsi": "Daun berbintik kecoklatan"}
+      ],
+      "pengendalian": [
+        "Pemangkasan dahan, cabang, ranting",
+        "Penyemprotan fungisida Bordeaux atau sulfat tembaga"
+      ]
+    },
+    {
+      "id": "P006",
+      "nama": "Bercak Daun Stigmina",
+      "gejala": [
+        {"id": "G026", "deskripsi": "Daun terdapat bercak kecil bulat atau bersudut"},
+        {"id": "G027", "deskripsi": "Daun hitam kecoklatan"},
+        {"id": "G028", "deskripsi": "Daun dikelilingi lingkaran klorotis yang jelas jika dilihat dari cahaya yang menembus"}
+      ],
+      "pengendalian": [
+        "Jaga kelembapan sekitar tanaman",
+        "Pangkas dan musnahkan bagian yang terserang",
+        "Pengelolaan air atau fungisida benlate, topsin M70 wp, derosal 500/60 wp"
+      ]
+    },
+    {
+      "id": "P007",
+      "nama": "Bercak Daun Kelabu",
+      "gejala": [
+        {"id": "G029", "deskripsi": "Daun gugur"},
+        {"id": "G030", "deskripsi": "Daun berlubang"},
+        {"id": "G031", "deskripsi": "Daun muda berupa bercak putih keabuan"},
+        {"id": "G032", "deskripsi": "Daun dapat membentuk bercak yang besar"},
+        {"id": "G033", "deskripsi": "Tepi daun dibatasi dengan warna gelap"}
+      ],
+      "pengendalian": [
+        "Tidak perlu pengendalian khusus karena tidak terlalu merugikan"
+      ]
+    },
+    {
+      "id": "P008",
+      "nama": "Kudis Buah",
+      "gejala": [
+        {"id": "G034", "deskripsi": "Buah terdapat bercak kuning yang akan berubah menjadi abu-abu"},
+        {"id": "G035", "deskripsi": "Pembuahan tidak terjadi"},
+        {"id": "G036", "deskripsi": "Bunga gugur/rontok"}
+      ],
+      "pengendalian": [
+        "Fungisida dithane m-45, manzate, atau pignoe tiga kali seminggu",
+        "Pangkas tangkai bunga yang terserang"
+      ]
+    },
+    {
+      "id": "P009",
+      "nama": "Penyakit Blendok",
+      "gejala": [
+        {"id": "G037", "deskripsi": "Batang berlubang"},
+        {"id": "G038", "deskripsi": "Blendok akan berubah warna menjadi coklat atau hitam"},
+        {"id": "G039", "deskripsi": "Batang/cabang mengeluarkan blendok"}
+      ],
+      "pengendalian": [
+        "Potong bagian yang sakit",
+        "Tutup lubang dengan kapas yang dicelupkan ke dalam insektisida",
+        "Semprot pohon dengan bubuk Bordeaux"
+      ]
+    }
+  ]
+}
