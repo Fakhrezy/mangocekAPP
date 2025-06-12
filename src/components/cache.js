@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 export default function ChatbotDiagnosa() {
   const [messages, setMessages] = useState([]);
@@ -8,10 +8,8 @@ export default function ChatbotDiagnosa() {
   const [pertanyaanIndex, setPertanyaanIndex] = useState(0);
   const [diagnosa, setDiagnosa] = useState(null);
   const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef(null);
 
-  // Text-to-Speech dengan callback setelah selesai
-  const speak = (text, onEndCallback) => {
+  const speak = (text) => {
     const synth = window.speechSynthesis;
     synth.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
@@ -22,15 +20,9 @@ export default function ChatbotDiagnosa() {
       voices.find((v) => v.lang.includes('id'));
     if (indoVoice) utterance.voice = indoVoice;
     utterance.rate = 1;
-
-    if (onEndCallback) {
-      utterance.onend = onEndCallback;
-    }
-
     synth.speak(utterance);
   };
 
-  // Ambil data pertanyaan dan knowledge base
   useEffect(() => {
     async function fetchData() {
       const pertanyaanRes = await fetch('/pertanyaan.json');
@@ -43,7 +35,6 @@ export default function ChatbotDiagnosa() {
     fetchData();
   }, []);
 
-  // Fungsi diagnosa
   const lakukanDiagnosa = useCallback(async () => {
     const hasil = knowledgeBase
       .map((penyakit) => {
@@ -75,32 +66,33 @@ export default function ChatbotDiagnosa() {
     }
   }, [knowledgeBase, gejalaTerpilih]);
 
-  // Fungsi menjawab
-  const handleJawaban = useCallback(
-    (jawaban) => {
-      window.speechSynthesis.cancel();
-      const current = pertanyaanList[pertanyaanIndex];
+  const handleJawaban = useCallback((jawaban) => {
+    window.speechSynthesis.cancel();
+    const current = pertanyaanList[pertanyaanIndex];
 
-      setMessages((prev) => [
-        ...prev,
-        { text: current.pertanyaan, isUser: false },
-        { text: jawaban ? '✅ Ya' : '❌ Tidak', isUser: true },
-      ]);
+    setMessages((prev) => [
+      ...prev,
+      { text: current.pertanyaan, isUser: false },
+      { text: jawaban ? '✅ Ya' : '❌ Tidak', isUser: true },
+    ]);
 
-      if (jawaban) {
-        setGejalaTerpilih((prev) => [...prev, current.id]);
-      }
+    if (jawaban) {
+      setGejalaTerpilih((prev) => [...prev, current.id]);
+    }
 
-      if (pertanyaanIndex + 1 < pertanyaanList.length) {
-        setPertanyaanIndex((prev) => prev + 1);
-      } else {
-        lakukanDiagnosa();
-      }
-    },
-    [pertanyaanIndex, pertanyaanList, lakukanDiagnosa]
-  );
+    if (pertanyaanIndex + 1 < pertanyaanList.length) {
+      setPertanyaanIndex((prev) => prev + 1);
+    } else {
+      lakukanDiagnosa();
+    }
+  }, [pertanyaanIndex, pertanyaanList, lakukanDiagnosa]);
 
-  // Konfigurasi speech recognition sekali saja
+  useEffect(() => {
+    if (pertanyaanList.length > 0 && pertanyaanIndex < pertanyaanList.length && !diagnosa) {
+      speak(pertanyaanList[pertanyaanIndex].pertanyaan);
+    }
+  }, [pertanyaanIndex, pertanyaanList, diagnosa, handleJawaban]);
+
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -116,10 +108,6 @@ export default function ChatbotDiagnosa() {
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
 
-    recognition.onerror = (event) => {
-      console.error('❌ Error mic:', event.error);
-    };
-
     recognition.onresult = (event) => {
       const hasil = event.results[0][0].transcript.toLowerCase().trim();
       console.log('🎤 Dengar:', hasil);
@@ -130,23 +118,20 @@ export default function ChatbotDiagnosa() {
       }
     };
 
-    recognitionRef.current = recognition;
-  }, [handleJawaban]);
+    recognition.onerror = (event) => {
+      console.error('❌ Error mic:', event.error);
+    };
 
-  // Trigger speak + start listening setelah selesai bicara
-  useEffect(() => {
     if (pertanyaanList.length > 0 && pertanyaanIndex < pertanyaanList.length && !diagnosa) {
-      speak(pertanyaanList[pertanyaanIndex].pertanyaan, () => {
-        recognitionRef.current?.start(); // mulai mendengarkan setelah bicara selesai
-      });
+      recognition.start();
     }
-  }, [pertanyaanIndex, pertanyaanList, diagnosa]);
+
+    return () => recognition.abort();
+  }, [pertanyaanIndex, pertanyaanList, diagnosa, handleJawaban]);
 
   const ulangiPertanyaan = () => {
     if (pertanyaanList.length > 0 && pertanyaanIndex < pertanyaanList.length) {
-      speak(pertanyaanList[pertanyaanIndex].pertanyaan, () => {
-        recognitionRef.current?.start();
-      });
+      speak(pertanyaanList[pertanyaanIndex].pertanyaan);
     }
   };
 
@@ -184,17 +169,14 @@ export default function ChatbotDiagnosa() {
           <h4 style={{ color: '#2e7d32' }}>Pertanyaan:</h4>
           <p style={{ fontSize: '18px', fontWeight: '500' }}>{pertanyaanList[pertanyaanIndex].pertanyaan}</p>
           <p style={{ fontSize: '14px', color: '#777' }}>
-            jawab dengan suara: ucapkan <strong>"ya"</strong> atau <strong>"tidak"</strong>
-          </p>
-          <p style={{ fontSize: '14px', color: '#777' }}>
-            atau klik tombol di bawah ini untuk menjawab
+            🎤 Anda juga bisa menjawab dengan suara: ucapkan <strong>"ya"</strong> atau <strong>"tidak"</strong>
           </p>
           <div style={{ marginTop: '10px' }}>
             <button onClick={() => handleJawaban(true)} style={buttonStyle('#43a047')}>Ya</button>
             <button onClick={() => handleJawaban(false)} style={buttonStyle('#e53935')}>Tidak</button>
             <button onClick={ulangiPertanyaan} style={buttonStyle('#039be5')}>🔁 Ulangi</button>
           </div>
-          {isListening && <p style={{ marginTop: '10px', color: '#888' }}> Mendengarkan...</p>}
+          {isListening && <p style={{ marginTop: '10px', color: '#888' }}>🎙️ Mendengarkan...</p>}
         </div>
       )}
     </div>
