@@ -14,8 +14,8 @@ app.use(bodyParser.json());
 const dbConfig = {
   host: 'localhost',
   user: 'root',
-  password: '', // ganti dengan password MySQL kamu
-  database: 'mangocek_db' // ganti dengan nama database kamu
+  password: '', 
+  database: 'mangocek_db' 
 };
 
 // Upload konfigurasi dengan multer
